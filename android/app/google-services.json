@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "331661498765",
+    "project_id": "swapi-flutter",
+    "storage_bucket": "swapi-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:331661498765:android:be27babb401e46620145c4",
+        "android_client_info": {
+          "package_name": "com.karyasa.starwars"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "331661498765-3gurgbsvi9ho6n2iugpu83f8ftm9nfa4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.karyasa.starwars",
+            "certificate_hash": "ed3640ab91c175aafa631f52263b4cab71952249"
+          }
+        },
+        {
+          "client_id": "331661498765-kf1unoicouj71uuf6rtr9vi594mgkovq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOvk-UBKTpEWjfW1aw-knw5GSMrbEBgYQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "331661498765-kf1unoicouj71uuf6rtr9vi594mgkovq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
