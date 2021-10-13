@@ -8,11 +8,11 @@ import 'package:starwars/view/favorite/favorite.dart';
 import 'package:starwars/view/home/home.dart';
 import 'package:starwars/view/profile/profile.dart';
 
-import 'view_model/save_people.dart';
+import 'view_model/people_provider..dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -25,12 +25,13 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String initialRoute = '/';
-  // User? user = FirebaseAuth.instance.currentUser;
+  User? user = FirebaseAuth.instance.currentUser;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    // initialRoute = user != null ? '/' : '/login';
+
+    initialRoute = user != null ? '/' : '/login';
   }
 
   @override

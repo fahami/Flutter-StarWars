@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:sqflite/sqflite.dart';
 import 'package:starwars/models/people.dart';
@@ -21,7 +22,6 @@ class DatabaseHelper {
     var db = openDatabase('$path/starwars.db', onCreate: (db, version) async {
       await db.execute('''
       CREATE TABLE $_tablePeoples (
-        id TEXT PRIMARY KEY,
         name TEXT,
         height TEXT,
         mass TEXT,
@@ -37,19 +37,19 @@ class DatabaseHelper {
         starships TEXT,
         created TEXT,
         edited TEXT,
-        url TEXT
+        url TEXT PRIMARY KEY,
+        isFavorite BOOL DEFAULT FALSE
         )
       ''');
     }, version: 1);
+    print(db);
     return db;
   }
 
   Future<List<People>> getPeoples() async {
     final db = await database;
     List<Map<String, dynamic>> results = await db!.query(_tablePeoples);
-    print(jsonDecode(results[0]['films']));
     return results.map((people) {
-      print(people);
       return People(
         birthYear: people['birth_year'],
         created: people['created'],
@@ -77,24 +77,73 @@ class DatabaseHelper {
     }).toList();
   }
 
-  Future<void> savePeople(People people) async {
+  Future<void> savePeople(
+    People people,
+  ) async {
     final db = await database;
-    await db!.insert(_tablePeoples, people.toJson());
+    await db!.insert(_tablePeoples, people.toJson()).catchError((err) {
+      log(err);
+    });
   }
 
-  Future<void> updatePeople(People people) async {
+  Future<void> updatePeople(People people, String url) async {
     final db = await database;
-    await db!.update(_tablePeoples, people.toJson());
+    await db!.update(_tablePeoples, people.toJson(),
+        where: 'url = ?', whereArgs: [url]).catchError((err) {
+      log(err);
+    });
   }
 
-  Future<void> deletePeople(String id) async {
+  Future<void> setFavorite(bool favorite, String url) async {
     final db = await database;
-    await db!.delete(_tablePeoples, where: 'id=?', whereArgs: [id]);
+    db!
+      ..rawUpdate("UPDATE peoples SET isFavorite = $favorite WHERE url = $url")
+          .catchError((err) {
+        log(err);
+      });
+  }
+
+  Future<void> deletePeople(String url) async {
+    final db = await database;
+    await db!.delete(_tablePeoples, where: 'url=?', whereArgs: [url]);
   }
 
   Future<void> removeDatabase() async {
     final db = await database;
     await db!.delete(_tablePeoples);
+  }
+
+  Future<List<People>> searchPeople(String query) async {
+    final db = await database;
+    List<Map<String, dynamic>> results = await db!
+        .rawQuery("SELECT * FROM $_tablePeoples WHERE name LIKE '%$query%'");
+    return results.map((people) {
+      return People(
+        birthYear: people['birth_year'],
+        created: people['created'],
+        edited: people['edited'],
+        eyeColor: people['eye_color'],
+        films: json.decode(people['films']),
+        gender: people['gender'],
+        hairColor: people['hair_color'],
+        height: people['height'].toString(),
+        homeworld: people['homeworld'],
+        mass: people['mass'].toString(),
+        name: people['name'],
+        skinColor: people['skin_color'],
+        species: json.decode(
+          people['species'],
+        ),
+        starships: json.decode(
+          people['starships'],
+        ),
+        url: people['url'],
+        vehicles: json.decode(
+          people['vehicles'],
+        ),
+        isFavorite: people['isFavorite'],
+      );
+    }).toList();
   }
 
   Future<bool?> isExist(String id) async {

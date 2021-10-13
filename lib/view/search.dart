@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:starwars/models/people.dart';
-import 'package:starwars/view_model/save_people.dart';
+import 'package:starwars/view_model/people_provider..dart';
 
 import 'profile/profile.dart';
 
@@ -59,25 +59,30 @@ class Search extends SearchDelegate<String> {
   @override
   Widget buildSuggestions(BuildContext context) {
     var provider = Provider.of<PeopleProvider>(context, listen: false);
-    List<People> result = provider.searchResults
-        .where((people) => people.name!.toLowerCase().contains(query))
-        .toList();
-    return ListView.builder(
-      itemCount: result.length,
-      itemBuilder: (context, i) {
-        return ListTile(
-          title: Text(result[i].name!),
-          subtitle: Text(result[i].gender!),
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProfileScreen(
-                people: result[i],
-              ),
-            ),
-          ),
-        );
-      },
+    return FutureBuilder(
+      future: provider.search(query),
+      builder: (context, snapshot) => Consumer<PeopleProvider>(
+        builder: (context, val, _) {
+          List<People> result = val.searchResults;
+          return ListView.builder(
+            itemCount: result.length,
+            itemBuilder: (context, i) {
+              return ListTile(
+                title: Text(result[i].name!),
+                subtitle: Text(result[i].gender!),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProfileScreen(
+                      people: result[i],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 }

@@ -1,8 +1,10 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:starwars/models/people.dart';
+import 'package:starwars/view/profile/form_edit.dart';
+import 'package:starwars/view_model/people_provider..dart';
 
 class ProfileScreen extends StatefulWidget {
   final People? people;
@@ -22,10 +24,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     var stringParams = [];
     var initValue = [];
-    widget.people!.props.forEach((value) {
+    var newprops = widget.people!.props;
+    var newparams = widget.people!.params;
+
+    newprops.removeRange(9, 13);
+    inspect(newprops);
+    newparams.removeRange(9, 13);
+    inspect(newparams);
+
+    // inspect(newprops);
+    newprops.forEach((value) {
       initValue.add(value.toString());
     });
-    widget.people!.params.forEach((controlller) {
+    newparams.forEach((controlller) {
       stringParams.add(controlller.toString());
     });
 
@@ -42,7 +53,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
       );
     });
-    inspect(widget.people!);
+    inspect(stringParams);
+    inspect(initValue);
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -65,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Processing Data')),
                       );
-                      inspect((textEditingControllers['films']));
+                      inspect(textEditingControllers);
                       People temp = People(
                         birthYear: textEditingControllers['birthYear'].text,
                         name: textEditingControllers['name'].text,
@@ -79,17 +91,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         mass: textEditingControllers['mass'].text,
                         skinColor: textEditingControllers['skinColor'].text,
                         url: textEditingControllers['url'].text,
-                        // species:
-                        //     json.decode(textEditingControllers['species'].text),
-                        // films:
-                        //     json.decode(textEditingControllers['films'].text),
-                        // starships: json
-                        //     .decode(textEditingControllers['starships'].text),
-                        // vehicles: json
-                        //     .decode(textEditingControllers['vehicles'].text),
                       );
-                      print("cek temp");
                       inspect(temp);
+                      Provider.of<PeopleProvider>(context, listen: false)
+                          .updateProfile(temp, widget.people!.url!)
+                          .then((_) => Navigator.pushNamed(context, '/'));
+
+                      // DatabaseHelper()..updatePeople(temp)..getPeoples();
                     }
 
                     setState(() {
@@ -104,13 +112,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Provider.of<PeopleProvider>(context, listen: false)
+              .setFavorite(true, widget.people!.url!);
+        },
+        child: Icon(
+          Icons.favorite_outline,
+          color: Colors.red,
+        ),
+        backgroundColor: Colors.white,
+      ),
       body: SingleChildScrollView(
         child: isEdit
-            ? Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [...textFields],
+            ? Padding(
+                padding: const EdgeInsets.all(16),
+                child: FormEdit(
+                  formKey: _formKey,
+                  textFields: textFields,
                 ),
               )
             : Padding(
@@ -119,73 +138,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ListTile(
-                      leading: Text('Name'),
-                      title: Text(widget.people!.name!),
+                      title: Text('Name'),
+                      subtitle: Text(widget.people!.name!),
                     ),
                     ListTile(
-                      leading: Text('Mass'),
-                      title: Text(widget.people!.mass!),
+                      title: Text('Mass'),
+                      subtitle: Text(widget.people!.mass!),
                     ),
                     ListTile(
-                      leading: Text('Skin Color'),
-                      title: Text(widget.people!.skinColor!),
+                      title: Text('Height'),
+                      subtitle: Text(widget.people!.height!),
                     ),
                     ListTile(
-                      leading: Text('URL'),
-                      title: Text(widget.people!.url!),
+                      title: Text('Skin Color'),
+                      subtitle: Text(widget.people!.skinColor!),
                     ),
-                    Text(
-                      'Species',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    ListTile(
+                      title: Text('Birth Year'),
+                      subtitle: Text(widget.people!.birthYear!),
                     ),
-                    widget.people!.species!.length > 0
-                        ? ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: widget.people!.species!.length,
-                            itemBuilder: (context, i) {
-                              return ListTile(
-                                leading: Icon(Icons.star),
-                                title: Text(widget.people!.species![i]),
-                              );
-                            })
-                        : Text("No Data"),
-                    Text(
-                      'Starship',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    ListTile(
+                      title: Text('Eye Color'),
+                      subtitle: Text(widget.people!.eyeColor!),
                     ),
-                    widget.people!.starships!.length > 0
-                        ? ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: widget.people!.starships!.length,
-                            itemBuilder: (context, i) {
-                              return ListTile(
-                                leading: Icon(Icons.flight),
-                                title: Text(widget.people!.starships![i]),
-                              );
-                            })
-                        : Text('No Data'),
-                    Text(
-                      'Vehicles',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    ListTile(
+                      title: Text('Hair Color'),
+                      subtitle: Text(widget.people!.hairColor!),
                     ),
-                    widget.people!.vehicles!.length > 0
-                        ? ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: widget.people!.vehicles!.length,
-                            itemBuilder: (context, i) {
-                              return ListTile(
-                                leading: Icon(Icons.motorcycle),
-                                title: Text(widget.people!.vehicles![i]),
-                              );
-                            })
-                        : Text('No Data'),
+                    ListTile(
+                      title: Text('Home World'),
+                      subtitle: Text(widget.people!.homeworld!),
+                    ),
+                    ListTile(
+                      title: Text('URL'),
+                      subtitle: Text(widget.people!.url!),
+                    ),
                   ],
                 ),
               ),

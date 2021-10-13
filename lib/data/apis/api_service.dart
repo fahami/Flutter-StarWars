@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:starwars/models/people.dart';
 import 'package:starwars/models/peoples.dart';

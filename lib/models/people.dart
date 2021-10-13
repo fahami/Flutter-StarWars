@@ -19,6 +19,7 @@ class People extends Equatable {
   final String? created;
   final String? edited;
   final String? url;
+  final bool? isFavorite;
 
   const People({
     this.name,
@@ -37,6 +38,7 @@ class People extends Equatable {
     this.created,
     this.edited,
     this.url,
+    this.isFavorite = false,
   });
 
   factory People.fromJson(Map<String, dynamic> json) => People(
@@ -64,6 +66,7 @@ class People extends Equatable {
         created: json['created'] as String?,
         edited: json['edited'] as String?,
         url: json['url'] as String?,
+        isFavorite: json['isFavorite'] == null ? false : json['isFavorite'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -101,6 +104,7 @@ class People extends Equatable {
         "created",
         "edited",
         "url",
+        "isFavorite",
       ];
   @override
   List<Object?> get props {
@@ -121,6 +125,7 @@ class People extends Equatable {
       created,
       edited,
       url,
+      isFavorite,
     ];
   }
 }
