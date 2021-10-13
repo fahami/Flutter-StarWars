@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:starwars/models/people.dart';
 
@@ -21,8 +23,8 @@ class DatabaseHelper {
       CREATE TABLE $_tablePeoples (
         id TEXT PRIMARY KEY,
         name TEXT,
-        height INTEGER,
-        mass INTEGER,
+        height TEXT,
+        mass TEXT,
         hair_color TEXT,
         skin_color TEXT,
         eye_color TEXT,
@@ -35,7 +37,7 @@ class DatabaseHelper {
         starships TEXT,
         created TEXT,
         edited TEXT,
-        url TEXT,
+        url TEXT
         )
       ''');
     }, version: 1);
@@ -45,15 +47,44 @@ class DatabaseHelper {
   Future<List<People>> getPeoples() async {
     final db = await database;
     List<Map<String, dynamic>> results = await db!.query(_tablePeoples);
+    print(jsonDecode(results[0]['films']));
     return results.map((people) {
       print(people);
-      return People.fromJson(people);
+      return People(
+        birthYear: people['birth_year'],
+        created: people['created'],
+        edited: people['edited'],
+        eyeColor: people['eye_color'],
+        films: json.decode(people['films']),
+        gender: people['gender'],
+        hairColor: people['hair_color'],
+        height: people['height'].toString(),
+        homeworld: people['homeworld'],
+        mass: people['mass'].toString(),
+        name: people['name'],
+        skinColor: people['skin_color'],
+        species: json.decode(
+          people['species'],
+        ),
+        starships: json.decode(
+          people['starships'],
+        ),
+        url: people['url'],
+        vehicles: json.decode(
+          people['vehicles'],
+        ),
+      );
     }).toList();
   }
 
   Future<void> savePeople(People people) async {
     final db = await database;
     await db!.insert(_tablePeoples, people.toJson());
+  }
+
+  Future<void> updatePeople(People people) async {
+    final db = await database;
+    await db!.update(_tablePeoples, people.toJson());
   }
 
   Future<void> deletePeople(String id) async {

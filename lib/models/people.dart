@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 
 class People extends Equatable {
@@ -39,18 +41,26 @@ class People extends Equatable {
 
   factory People.fromJson(Map<String, dynamic> json) => People(
         name: json['name'] as String?,
-        height: json['height'] as String?,
-        mass: json['mass'] as String?,
+        height: json['height'].toString(),
+        mass: json['mass'].toString(),
         hairColor: json['hair_color'] as String?,
         skinColor: json['skin_color'] as String?,
         eyeColor: json['eye_color'] as String?,
         birthYear: json['birth_year'] as String?,
         gender: json['gender'] as String?,
         homeworld: json['homeworld'] as String?,
-        films: json['films'] as List<dynamic>,
-        species: json['species'] as List<dynamic>,
-        vehicles: json['vehicles'] as List<dynamic>,
-        starships: json['starships'] as List<dynamic>,
+        films: json["films"] != null
+            ? List<String>.from(json["films"].map((x) => x))
+            : null,
+        species: json["species"] != null
+            ? List<String>.from(json["species"].map((x) => x))
+            : null,
+        vehicles: json["vehicles"] != null
+            ? List<String>.from(json["vehicles"].map((x) => x))
+            : null,
+        starships: json["starships"] != null
+            ? List<String>.from(json["starships"].map((x) => x))
+            : null,
         created: json['created'] as String?,
         edited: json['edited'] as String?,
         url: json['url'] as String?,
@@ -66,15 +76,32 @@ class People extends Equatable {
         'birth_year': birthYear,
         'gender': gender,
         'homeworld': homeworld,
-        'films': films,
-        'species': species,
-        'vehicles': vehicles,
-        'starships': starships,
+        'films': json.encode(films),
+        'species': json.encode(species),
+        'vehicles': json.encode(vehicles),
+        'starships': json.encode(starships),
         'created': created,
         'edited': edited,
         'url': url,
       };
-
+  List<String> get params => [
+        "name",
+        "height",
+        "mass",
+        "hairColor",
+        "skinColor",
+        "eyeColor",
+        "birthYear",
+        "gender",
+        "homeworld",
+        "films",
+        "species",
+        "vehicles",
+        "starships",
+        "created",
+        "edited",
+        "url",
+      ];
   @override
   List<Object?> get props {
     return [
