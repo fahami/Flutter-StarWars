@@ -8,6 +8,7 @@ import 'package:starwars/view/favorite/favorite.dart';
 import 'package:starwars/view/home/home.dart';
 import 'package:starwars/view/profile/profile.dart';
 
+import 'view/person/person.dart';
 import 'view_model/people_provider..dart';
 
 void main() async {
@@ -50,9 +51,10 @@ class _MyAppState extends State<MyApp> {
         initialRoute: initialRoute,
         routes: {
           '/': (_) => HomeScreen(),
-          '/profile': (_) => ProfileScreen(),
+          '/person': (_) => PersonScreen(),
           '/favorite': (_) => FavoriteScreen(),
           '/login': (_) => LoginScreen(),
+          '/profile': (_) => ProfileScreen()
         },
       ),
     );

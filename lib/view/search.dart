@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:starwars/models/people.dart';
 import 'package:starwars/view_model/people_provider..dart';
 
-import 'profile/profile.dart';
+import 'person/person.dart';
 
 class Search extends SearchDelegate<String> {
   @override
@@ -43,7 +43,7 @@ class Search extends SearchDelegate<String> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileScreen(
+                    builder: (context) => PersonScreen(
                       people: result[i],
                     ),
                   ),
@@ -73,7 +73,7 @@ class Search extends SearchDelegate<String> {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProfileScreen(
+                    builder: (context) => PersonScreen(
                       people: result[i],
                     ),
                   ),

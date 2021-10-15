@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:starwars/models/people.dart';
-import 'package:starwars/view/profile/profile.dart';
+import 'package:starwars/view/person/person.dart';
 import 'package:starwars/view/search.dart';
 import 'package:starwars/view_model/people_provider..dart';
 
@@ -26,21 +26,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 showSearch(context: context, delegate: Search());
               },
               icon: Icon(Icons.search)),
-          TextButton(
-              onPressed: () {
-                provider.initialSave();
-              },
-              child: Text(
-                'Load',
-                style: TextStyle(color: Colors.white),
-              )),
-          TextButton(
-              onPressed: () {
-                provider.removeDatabase();
-              },
-              child: Text(
-                'Delete',
-                style: TextStyle(color: Colors.white),
+          IconButton(
+              onPressed: () => Navigator.pushNamed(context, '/profile'),
+              icon: Icon(
+                Icons.person,
+                color: Colors.white,
               )),
         ],
       ),
@@ -87,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ProfileScreen(
+                                  builder: (context) => PersonScreen(
                                     people: data,
                                   ),
                                 ),
@@ -115,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             onTap: () => Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ProfileScreen(
+                                builder: (context) => PersonScreen(
                                   people: data,
                                 ),
                               ),
